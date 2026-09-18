@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vesper.ai — Operational AI Infrastructure</title>
+    <title>Дамир VPN — Безопасный интернет</title>
     
-    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cg transform='rotate(-30 12 12)'%3E%3Ccircle cx='7.3' cy='3.2' r='1.45'/%3E%3Crect x='5.5' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Crect x='14.9' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Ccircle cx='16.7' cy='20.8' r='1.45'/%3E%3C/g%3E%3C/svg%3E">
 
     <style>
@@ -14,14 +13,6 @@
         html, body { background: #000000; background: var(--bg, #000000); color: #ffffff; color: var(--text, #ffffff); }
 
         /* Fonts */
-        @font-face {
-            font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap;
-            src: url("inter.woff2") format("woff2");
-        }
-        @font-face {
-            font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap;
-            src: url("instrument-serif-italic.woff2") format("woff2");
-        }
         @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap');
 
         /* Resets */
@@ -34,7 +25,7 @@
         html { scroll-behavior: smooth; }
         *, *::before, *::after { box-sizing: inherit; }
         a { color: inherit; text-decoration: none; }
-        button, input { font-family: inherit; }
+        button, input { font-family: inherit; border: none; outline: none; }
 
         /* Tokens (Default ~1440px) */
         :root {
@@ -47,7 +38,7 @@
             --hero-gap: 85px; --copy-max: 860px; --lede-max: 470px;
         }
 
-        /* Breakpoints */
+        /* Responsive Breakpoints */
         @media (min-width: 1600px) {
             :root { --logo: 17px; --logo-mark: 24px; --nav: 15px; --nav-h: 44px; --btn: 15px; --btn-h: 44px; --hero-btn-h: 48px; --h1: 64px; --lede: 18px; --badge: 13.5px; --stat-size: 15px; --header-y: 28px; --header-x: 64px; --stats-x: 96px; --stats-y: 44px; --copy-max: 980px; --lede-max: 540px; }
             .header { padding: var(--header-y) var(--header-x) 10px !important; }
@@ -66,12 +57,6 @@
             .badge { padding: 10px 15px !important; }
             .stat .stat-icon-wide { width: 48px; height: 26px; }
         }
-        @media (min-width: 2560px) {
-            :root { --h1: 88px; --lede: 22px; --header-x: 120px; --stats-x: 160px; --copy-max: 1280px; --lede-max: 680px; }
-        }
-        @media (min-width: 1280px) and (max-width: 1599px) {
-            :root { --h1: 54px; --lede: 16px; --header-x: 48px; --stats-x: 80px; --copy-max: 900px; }
-        }
         @media (min-width: 901px) and (max-width: 1279px) {
             :root { --logo: 15px; --nav: 13px; --nav-h: 36px; --btn: 13px; --btn-h: 38px; --hero-btn-h: 40px; --h1: 42px; --lede: 15px; --badge: 12px; --stat-size: 12.5px; --header-y: 16px; --header-x: 28px; --stats-x: 36px; --stats-y: 28px; --hero-gap: 64px; --copy-max: 760px; --lede-max: 440px; }
             #site-nav a { padding: 0 14px !important; }
@@ -79,19 +64,9 @@
             .lede { margin-top: 14px !important; }
             .hero-actions { margin-top: 20px !important; }
         }
-        @media (min-width: 901px) and (max-height: 850px) {
-            :root { --header-y: 14px; --stats-y: 24px; --hero-gap: 48px; --h1: 40px; }
-            .badge { margin-bottom: 12px !important; }
-            .lede { margin-top: 12px !important; }
-            .hero-actions { margin-top: 16px !important; }
-        }
-        @media (min-width: 901px) and (max-height: 720px) {
-            :root { --h1: 34px; --lede: 14px; --hero-gap: 32px; --stats-y: 18px; --nav-h: 30px; --btn-h: 34px; --hero-btn-h: 36px; }
-            .badge { margin-bottom: 8px !important; }
-        }
         @media (min-width: 901px) {
             html, body { height: 100%; overflow: hidden; }
-            .page { height: 100vh; height: 100dvh; overflow: hidden; }
+            .page { height: 100vh; overflow: hidden; }
             .burger { display: none !important; }
         }
         @media (max-width: 900px) {
@@ -114,40 +89,39 @@
             .lede { max-width: 100% !important; }
             
             :root { --logo: 16px; --btn: 15px; --btn-h: 46px; --hero-btn-h: 48px; --h1: 36px; --lede: 16.5px; --badge: 13.5px; --stat-size: 15px; --header-x: 16px; --header-y: 18px; --stats-x: 20px; --stats-y: 28px; --hero-gap: 36px; }
-        }
-        @media (max-width: 560px) {
-            :root { --h1: 34px; --lede: 16px; --header-x: 16px; }
-            .hero-actions { flex-direction: column; width: 100%; }
-            .hero-actions .btn { width: 100%; }
+            
+            .cards-grid { grid-template-columns: 1fr !important; }
         }
 
         /* Layout & Layers */
         .hero-photo { position: fixed; inset: 0; z-index: 0; }
         .hero-photo video { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
         .hero-photo::after { content: ''; position: absolute; inset: 0; background: transparent; }
-        .page { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr auto; min-height: 100vh; min-height: 100dvh; }
+        .page { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr auto; min-height: 100vh; }
         .grain { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.04"/%3E%3C/svg%3E'); }
+        
         .menu-backdrop { display: none; position: fixed; inset: 0; z-index: 40; background: rgba(8,8,8,0.42); opacity: 0; visibility: hidden; transition: opacity 0.28s ease, visibility 0.28s ease; }
         body.menu-open .menu-backdrop { display: block; opacity: 1; visibility: visible; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
 
         /* Header */
         .header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: var(--header-y) var(--header-x) 10px; z-index: 50; position: relative; }
-        .logo { display: inline-flex; align-items: center; gap: 9px; justify-self: start; font-size: var(--logo); font-weight: 600; letter-spacing: -0.03em; color: #fff; }
+        .logo { display: inline-flex; align-items: center; gap: 9px; justify-self: start; font-size: var(--logo); font-weight: 600; letter-spacing: -0.03em; color: #fff; cursor: pointer; }
         .logo svg { width: var(--logo-mark); height: var(--logo-mark); }
-        .logo-suffix { font-weight: 400; }
+        .logo-suffix { font-weight: 400; color: #9a9a9a; }
         
         #site-nav { display: flex; align-items: center; gap: 8px; justify-self: center; }
         #site-nav a { 
             display: inline-flex; align-items: center; height: var(--nav-h); padding: 0 18px; border-radius: 7px; overflow: hidden; position: relative;
             border: 1px solid rgba(198,198,198,0.55); background: linear-gradient(105deg, #050505 0%, #2a2a2a 48%, #4a4a4a 100%);
             color: #f3f3f3; font-size: var(--nav); font-weight: 400; letter-spacing: -0.01em; white-space: nowrap;
-            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.3s; cursor: pointer;
         }
+        #site-nav a.active { border-color: rgba(235,235,235,0.9); background: linear-gradient(105deg, #111 0%, #3a3a3a 45%, #6a6a6a 100%); box-shadow: 0 0 18px rgba(200,210,230,0.18); }
         #site-nav a::before {
             content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.16) 50%, transparent 70%);
             transform: translateX(-120%); transition: transform 0.6s ease; pointer-events: none;
         }
-        #site-nav a:hover { border-color: rgba(235,235,235,0.9); background: linear-gradient(105deg, #111 0%, #3a3a3a 45%, #6a6a6a 100%); box-shadow: 0 0 18px rgba(200,210,230,0.18); }
+        #site-nav a:hover { border-color: rgba(235,235,235,0.9); box-shadow: 0 0 18px rgba(200,210,230,0.18); }
         #site-nav a:hover::before { transform: translateX(120%); }
 
         /* Burger */
@@ -164,17 +138,16 @@
 
         /* Buttons */
         .btn {
-            position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center;
+            position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             height: var(--btn-h); padding: 0 16px; border-radius: 6px; font-size: var(--btn); font-weight: 500;
             letter-spacing: -0.02em; line-height: 1; white-space: nowrap; cursor: pointer;
-            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease, filter 0.35s ease;
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease, filter 0.35s ease, width 0.3s;
         }
         .btn::after {
             content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.45) 48%, transparent 76%);
             transform: translateX(-130%); transition: transform 0.65s ease; pointer-events: none; z-index: 2;
         }
         .btn:hover::after { transform: translateX(130%); }
-        .header-cta { justify-self: end; }
 
         .btn-solid {
             background: linear-gradient(180deg, #ffffff 0%, #e7e7e7 48%, #cfcfcf 100%); color: #111; border: 1px solid #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
@@ -183,7 +156,11 @@
             background: linear-gradient(180deg, #ffffff 0%, #f3f6ff 42%, #d5def2 100%); border-color: #f2f6ff;
             box-shadow: inset 0 1px 0 #fff, 0 0 22px rgba(186,208,255,0.35), 0 8px 18px rgba(255,255,255,0.12);
         }
-        .hero .btn-solid:hover { box-shadow: inset 0 1px 0 #fff, 0 0 26px rgba(186,208,255,0.4), 0 8px 18px rgba(255,255,255,0.14); }
+        .btn-solid.connected {
+            background: linear-gradient(180deg, #ffffff 0%, #e8f0ff 48%, #c2d6ff 100%);
+            box-shadow: inset 0 1px 0 #fff, 0 0 30px rgba(150, 180, 255, 0.6), 0 8px 18px rgba(255,255,255,0.2);
+            color: #002266; border-color: #ffffff;
+        }
 
         .btn-ghost {
             background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.45) 50%, rgba(160,175,200,0.08));
@@ -193,16 +170,21 @@
             background: linear-gradient(135deg, rgba(210,225,255,0.18) 0%, rgba(0,0,0,0.35) 48%, rgba(180,195,220,0.16) 100%); border-color: rgba(220,230,255,0.75);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 0 20px rgba(170,200,255,0.22);
         }
-
-        .hero .btn-ghost {
-            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(0,0,0,0.5) 46%, rgba(150,170,200,0.1)); border: 1px solid rgba(198,198,198,0.55);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-        }
-        .hero .btn-ghost:hover { box-shadow: 0 0 24px rgba(170,200,255,0.28); border-color: rgba(220,230,255,0.8); }
         .hero .btn { height: var(--hero-btn-h); padding: 0 18px; }
 
+        /* Spinner for connection */
+        .spinner {
+            width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.2);
+            border-top-color: #111; border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* SPA Tabs */
+        .tab-content { display: none; align-items: flex-end; justify-content: center; padding: 8px 24px var(--hero-gap); min-height: 0; width: 100%; height: 100%; }
+        .tab-content.active { display: flex; }
+
         /* Hero */
-        .hero { display: flex; align-items: flex-end; justify-content: center; padding: 8px 24px var(--hero-gap); min-height: 0; }
         .hero-copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; max-width: var(--copy-max); width: 100%; }
         
         .badge {
@@ -219,15 +201,37 @@
         .lede { max-width: var(--lede-max); margin-top: 18px; color: #9a9a9a; font-size: var(--lede); font-weight: 400; line-height: 1.55; letter-spacing: -0.015em; }
         .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
 
+        /* Cards Grid (Pricing & Clients) */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(3, minmax(240px, 1fr)); gap: 16px; width: 100%; max-width: 1000px;
+            text-align: left; margin-top: 24px;
+        }
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(0,0,0,0.5) 46%, rgba(150,170,200,0.1));
+            border: 1px solid rgba(198,198,198,0.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 24px; border-radius: 12px; color: #fff;
+            display: flex; flex-direction: column; gap: 12px;
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.3s;
+        }
+        .glass-card:hover {
+            background: linear-gradient(135deg, rgba(210,225,255,0.18) 0%, rgba(0,0,0,0.35) 48%, rgba(180,195,220,0.16) 100%);
+            border-color: rgba(220,230,255,0.75); box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 0 24px rgba(170,200,255,0.28);
+            transform: translateY(-4px);
+        }
+        .card-title { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+        .card-price { font-family: "Instrument Serif", serif; font-style: italic; font-size: 32px; color: #fff; }
+        .card-text { font-size: 14px; color: #9a9a9a; line-height: 1.5; }
+        .client-name { font-size: 15px; font-weight: 600; color: #d8d8d8; display: flex; align-items: center; gap: 8px; }
+        .client-avatar { width: 28px; height: 28px; border-radius: 50%; background: #2a2a2a; border: 1px solid rgba(255,255,255,0.2); display: grid; place-items: center; font-size: 12px; }
+
         /* Stats */
         .stats { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 var(--stats-x) var(--stats-y); padding-bottom: max(var(--stats-y), env(safe-area-inset-bottom)); color: #d8d8d8; }
         .stat { display: inline-flex; align-items: center; gap: 14px; font-size: var(--stat-size); letter-spacing: -0.015em; white-space: nowrap; }
         .stat svg { width: 20px; height: 20px; flex-shrink: 0; }
-        .stat .stat-icon-wide { width: 38px; height: 21px; }
 
         /* Animations */
         .appear {
-            opacity: 1; /* Resting state */
+            opacity: 1; 
             animation-duration: 1.05s; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); animation-delay: var(--d, 0.08s);
         }
         .is-in { animation: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
@@ -237,9 +241,7 @@
         @keyframes in-mask { 0% { opacity: 0; transform: translateY(40%); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes in-pop { 0% { opacity: 0; transform: scale(0.9); } 70% { opacity: 1; transform: scale(1.03); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes in-btn { 0% { opacity: 0; transform: translateY(18px) scale(0.94); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes in-side { 0% { opacity: 0; transform: translateX(22px); } 100% { opacity: 1; transform: translateX(0); } }
         @keyframes in-stat { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes in-star { 0% { opacity: 0; transform: scale(0.2) rotate(-50deg); } 65% { opacity: 1; transform: scale(1.2) rotate(8deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
         @keyframes in-em { 0% { opacity: 0.35; filter: blur(4px); } 100% { opacity: 1; filter: blur(0); } }
 
         .appear--scale { animation-name: in-scale; }
@@ -247,18 +249,12 @@
         .appear--mask { animation-name: in-mask; }
         .appear--pop { animation-name: in-pop; }
         .appear--btn { animation-name: in-btn; }
-        .appear--side { animation-name: in-side; }
         .appear--stat { animation-name: in-stat; }
-        
-        .badge-star { animation: in-star 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both; }
         .appear--em { animation: in-em 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.72s both; }
-        
-        /* Specific overrides for Lede */
-        .lede.appear--soft { animation-duration: 1.25s; }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { transition: none !important; animation: none !important; }
-            .appear, .hero-photo, .hero h1 em, .badge-star { opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
+            .appear, .hero-photo, .hero h1 em { opacity: 1 !important; transform: none !important; filter: none !important; }
         }
     </style>
 </head>
@@ -274,7 +270,7 @@
         <div class="menu-backdrop"></div>
         
         <header class="header">
-            <a href="#top" class="logo appear appear--scale" aria-label="Vesper.ai" style="--d: 0.08s">
+            <a onclick="switchTab('tab-home')" class="logo appear appear--scale" aria-label="Damir VPN" style="--d: 0.08s">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <g transform="rotate(-30 12 12)">
                         <circle cx="7.3" cy="3.2" r="1.45"/>
@@ -283,17 +279,16 @@
                         <circle cx="16.7" cy="20.8" r="1.45"/>
                     </g>
                 </svg>
-                Vesper<span class="logo-suffix">.ai</span>
+                Дамир<span class="logo-suffix">.vpn</span>
             </a>
 
             <nav id="site-nav" aria-label="Primary">
-                <a href="#benefits" class="appear appear--scale" style="--d: 0.16s">Benefits</a>
-                <a href="#how-it-works" class="appear appear--soft" style="--d: 0.28s">How It Works</a>
-                <a href="#faqs" class="appear appear--scale" style="--d: 0.40s">FAQs</a>
-                <a href="#pricing" class="appear appear--soft" style="--d: 0.52s">Pricing</a>
+                <a onclick="switchTab('tab-home')" class="nav-btn active appear appear--scale" style="--d: 0.16s">Главная</a>
+                <a onclick="switchTab('tab-clients')" class="nav-btn appear appear--soft" style="--d: 0.28s">Отзывы</a>
+                <a onclick="switchTab('tab-pricing')" class="nav-btn appear appear--scale" style="--d: 0.40s">Цены</a>
             </nav>
 
-            <a href="#start" class="btn btn-solid header-cta appear appear--scale" style="--d: 0.34s">Start for Free</a>
+            <button onclick="startConnection()" class="btn btn-solid header-cta appear appear--scale" style="--d: 0.34s; justify-self: end;">Войти</button>
             
             <button class="burger appear appear--scale" style="--d: 0.34s" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu">
                 <div class="burger-box">
@@ -304,141 +299,190 @@
             </button>
         </header>
 
-        <main id="top" class="hero">
+        <!-- TAB: HOME -->
+        <main id="tab-home" class="tab-content active">
             <div class="hero-copy">
                 <div class="badge appear appear--pop" style="--d: 0.22s">
-                    <svg class="badge-star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg viewBox="0 0 24 24">
                         <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/>
                     </svg>
-                    Operational AI Infrastructure
+                    Premium VPN Infrastructure
                 </div>
                 
                 <h1>
-                    <span class="headline-line"><span class="appear appear--mask" style="--d: 0.42s">Train <em class="appear--em">AI agents</em> on your</span></span>
-                    <span class="headline-line"><span class="appear appear--mask" style="--d: 0.62s">workflows in minutes.</span></span>
+                    <span class="headline-line"><span class="appear appear--mask" style="--d: 0.42s">Безопасный <em class="appear--em">интернет</em> на всех</span></span>
+                    <span class="headline-line"><span class="appear appear--mask" style="--d: 0.62s">ваших устройствах.</span></span>
                 </h1>
 
                 <p class="lede appear appear--soft" style="--d: 0.82s">
-                    Deploy adaptive AI agents that learn, execute, and scale operational tasks across your business.
+                    Обходите блокировки, защищайте личные данные и наслаждайтесь свободным доступом к сети без ограничений скорости.
                 </p>
 
                 <div class="hero-actions">
-                    <a href="#start" class="btn btn-solid appear appear--btn" style="--d: 0.96s">Start for Free</a>
-                    <a href="#demo" class="btn btn-ghost appear appear--side" style="--d: 1.10s">See it in action</a>
+                    <button class="btn btn-solid appear appear--btn" id="main-connect-btn" style="--d: 0.96s" onclick="startConnection()">
+                        <span id="btn-text">Попробовать бесплатно</span>
+                        <div id="btn-loader" class="spinner"></div>
+                        <span id="btn-success" style="display: none; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            Подключено
+                        </span>
+                    </button>
+                    <button onclick="switchTab('tab-pricing')" class="btn btn-ghost appear appear--side" style="--d: 1.10s">Посмотреть тарифы</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- TAB: CLIENTS -->
+        <main id="tab-clients" class="tab-content">
+            <div class="hero-copy">
+                <h1>
+                    <span class="headline-line"><span class="appear appear--mask">Что говорят <em class="appear--em">клиенты</em></span></span>
+                </h1>
+                <div class="cards-grid">
+                    <div class="glass-card appear appear--soft" style="--d: 0.2s">
+                        <div class="client-name"><div class="client-avatar">A</div> Алексей В.</div>
+                        <div class="card-text">«Дамир VPN крутой! Скорость вообще не режет, пинг в играх отличный. Лучшее решение на рынке.»</div>
+                    </div>
+                    <div class="glass-card appear appear--soft" style="--d: 0.3s">
+                        <div class="client-name"><div class="client-avatar">M</div> Мария С.</div>
+                        <div class="card-text">«Наконец-то ютуб работает без лагов и зависаний. Спасибо техподдержке за быструю настройку на роутере.»</div>
+                    </div>
+                    <div class="glass-card appear appear--soft" style="--d: 0.4s">
+                        <div class="client-name"><div class="client-avatar">T</div> Тимур К.</div>
+                        <div class="card-text">«Отличный сервис, 10/10. Пользуюсь для работы и доступа к корпоративным порталам. Ни единого обрыва.»</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- TAB: PRICING -->
+        <main id="tab-pricing" class="tab-content">
+            <div class="hero-copy">
+                <h1>
+                    <span class="headline-line"><span class="appear appear--mask">Доступные <em class="appear--em">тарифы</em></span></span>
+                </h1>
+                <div class="cards-grid">
+                    <div class="glass-card appear appear--soft" style="--d: 0.2s">
+                        <div class="card-title">Базовый</div>
+                        <div class="card-price">90 руб/мес</div>
+                        <div class="card-text">Доступ к 10 серверам Европы. Идеально для серфинга и просмотра видео без ограничений.</div>
+                        <button class="btn btn-ghost" style="margin-top:auto" onclick="startConnection()">Выбрать</button>
+                    </div>
+                    <div class="glass-card appear appear--soft" style="--d: 0.3s">
+                        <div class="card-title">Оптимальный</div>
+                        <div class="card-price">150 руб/мес</div>
+                        <div class="card-text">Все сервера, блокировка рекламы, защита от трекеров и поддержка до 5 устройств.</div>
+                        <button class="btn btn-solid" style="margin-top:auto" onclick="startConnection()">Выбрать</button>
+                    </div>
+                    <div class="glass-card appear appear--soft" style="--d: 0.4s">
+                        <div class="card-title">Выделенный IP</div>
+                        <div class="card-price">300 руб/мес</div>
+                        <div class="card-text">Личный статический IP-адрес для банков, криптобирж и безопасной удаленной работы.</div>
+                        <button class="btn btn-ghost" style="margin-top:auto" onclick="startConnection()">Выбрать</button>
+                    </div>
                 </div>
             </div>
         </main>
 
         <footer class="stats">
             <div class="stat appear appear--stat" style="--d: 1.12s">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="g1" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.38"/>
-                            <stop offset="100%" stop-color="#3a3a3a" stop-opacity="0.62"/>
-                        </linearGradient>
-                        <linearGradient id="g2" x1="13" y1="2" x2="24" y2="22" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#3a3a3a" stop-opacity="0.38"/>
-                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0.62"/>
-                        </linearGradient>
-                    </defs>
-                    <rect x="3.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#g1)"/>
-                    <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#g2)"/>
-                    <rect x="9.2" y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                4.2M+ workflows automated
+                4.2M+ ТБ зашифрованного трафика
             </div>
 
             <div class="stat appear appear--stat" style="--d: 1.28s">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2.4" y="2.4" width="19.2" height="19.2" rx="6.2" fill="#ffffff"/>
-                    <path d="M12 7.1v7.4M8.15 12.35L12 16.2l3.85-3.85" stroke="#111" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                92% reduction in manual operations
+                99.9% аптайм серверов
             </div>
 
             <div class="stat appear appear--stat" style="--d: 1.44s">
-                <svg class="stat-icon-wide" viewBox="0 0 40 22" xmlns="http://www.w3.org/2000/svg">
+                <svg class="stat-icon-wide" viewBox="0 0 40 22">
                     <circle cx="10.2" cy="11" r="9.2" fill="#2b2b2b"/>
-                    <ellipse cx="10.2" cy="12.1" rx="4.15" ry="3.7" fill="#f4f4f4"/>
-                    <polygon points="6,9 7,7 9,9" fill="#f4f4f4"/>
-                    <polygon points="14.4,9 13.4,7 11.4,9" fill="#f4f4f4"/>
-                    <circle cx="8.8" cy="11.5" r="0.7" fill="#1a1a1a"/>
-                    <circle cx="11.6" cy="11.5" r="0.7" fill="#1a1a1a"/>
-                    
                     <circle cx="20.2" cy="11" r="9.2" fill="#ffffff"/>
-                    <circle cx="18" cy="10" r="1.7" fill="#1a1a1a"/>
-                    <circle cx="22.4" cy="10" r="1.7" fill="#1a1a1a"/>
-                    <ellipse cx="20.2" cy="12.5" rx="0.8" ry="0.5" fill="#1a1a1a"/>
-                    <path d="M17.5 14.5 Q20.2 16.5 22.9 14.5" stroke="#111" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-                    
-                    <circle cx="30.2" cy="11" r="9.2" fill="#f26b1d"/>
-                    <text x="30.2" y="15.1" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#ffffff" text-anchor="middle">e</text>
+                    <circle cx="30.2" cy="11" r="9.2" fill="#4a4a4a"/>
                 </svg>
-                180+ operational teams onboarded
+                180+ локаций по всему миру
             </div>
         </footer>
     </div>
 
     <script>
         (function() {
-            const appears = document.querySelectorAll('.appear');
-            const photo = document.querySelector('.hero-photo');
-            const burger = document.querySelector('.burger');
-            const navLinks = document.querySelectorAll('#site-nav a');
-            
-            // Clean up animation classes once they finish
-            appears.forEach(el => {
-                el.addEventListener('animationend', () => {
-                    el.classList.add('is-in');
-                }, { once: true });
-            });
-            if(photo) {
-                photo.addEventListener('animationend', () => photo.classList.add('is-in'), { once: true });
-            }
-
-            // Fallback: If animations are stuck or don't run, force them visible
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    appears.forEach(el => {
-                        const anims = el.getAnimations();
-                        if (!anims.length || anims.every(a => a.playState === 'finished')) {
-                            el.classList.add('is-in');
-                        }
-                    });
-                    if (photo && (!photo.getAnimations().length || photo.getAnimations().every(a => a.playState === 'finished'))) {
-                        photo.classList.add('is-in');
-                    }
+            // Setup Initial Animations
+            const triggerAnimations = (container) => {
+                const appears = container.querySelectorAll('.appear');
+                appears.forEach(el => {
+                    el.classList.remove('is-in');
+                    // Trigger reflow
+                    void el.offsetWidth;
+                    el.addEventListener('animationend', () => {
+                        el.classList.add('is-in');
+                    }, { once: true });
                 });
-            });
+            };
+            
+            triggerAnimations(document);
+
+            // Tab Switching Logic
+            window.switchTab = function(tabId) {
+                // Update Nav UI
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+                if(activeBtn) activeBtn.classList.add('active');
+
+                // Switch Content
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                const newTab = document.getElementById(tabId);
+                newTab.classList.add('active');
+                
+                // Re-trigger animations in new tab
+                triggerAnimations(newTab);
+                toggleMenu(true);
+            };
 
             // Mobile Menu Logic
+            const burger = document.querySelector('.burger');
             function toggleMenu(forceClose = false) {
                 const isOpen = document.body.classList.contains('menu-open');
                 if (isOpen || forceClose) {
                     document.body.classList.remove('menu-open');
                     burger.setAttribute('aria-expanded', 'false');
-                    burger.setAttribute('aria-label', 'Open menu');
                 } else {
                     document.body.classList.add('menu-open');
                     burger.setAttribute('aria-expanded', 'true');
-                    burger.setAttribute('aria-label', 'Close menu');
                 }
             }
-
             burger.addEventListener('click', () => toggleMenu());
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => toggleMenu(true));
-            });
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') toggleMenu(true);
-            });
+            // Cool Button Animation Connection Logic
+            window.startConnection = function() {
+                const btn = document.getElementById('main-connect-btn');
+                if(!btn) return;
 
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 901) toggleMenu(true);
-            });
+                const text = document.getElementById('btn-text');
+                const loader = document.getElementById('btn-loader');
+                const success = document.getElementById('btn-success');
+
+                // State 1: Loading
+                text.style.display = 'none';
+                success.style.display = 'none';
+                loader.style.display = 'block';
+                btn.style.pointerEvents = 'none'; // Prevent double clicking
+
+                // State 2: Success (after 2 seconds)
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    success.style.display = 'flex';
+                    btn.classList.add('connected');
+                    btn.style.pointerEvents = 'auto'; 
+                }, 2000);
+            };
         })();
     </script>
 </body>
