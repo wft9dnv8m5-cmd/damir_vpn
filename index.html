@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damir VPN</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-geist { font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; }
+        .font-silkscreen { font-family: 'Silkscreen', cursive; }
+        
+        .cta-gradient {
+            background: linear-gradient(to bottom, #2B2B2B, #101010);
+        }
+        
+        /* Mobile Drawer Transition Classes */
+        .mobile-link {
+            transition: all 300ms ease;
+            opacity: 0;
+            transform: translateX(24px);
+        }
+        .mobile-link.open {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .mobile-cta {
+            transition: all 400ms ease;
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        .mobile-cta.open {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hover effects for glass cards to make them feel clickable */
+        .glass-card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body class="font-geist antialiased">
+    <section class="relative h-screen w-full overflow-hidden">
+        <!-- Full-bleed Background Video -->
+        <video 
+            autoplay 
+            loop 
+            muted 
+            playsinline 
+            class="absolute inset-0 h-full w-full object-cover" 
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260803_192301_9231ed6b-c55c-4a48-909c-4ebe11cf2e11.mp4">
+        </video>
+
+        <!-- Content Overlay -->
+        <div class="relative z-10 flex h-full flex-col">
+            <!-- Top Bar Navigation -->
+            <header class="flex items-center justify-between px-5 py-5 sm:px-8 sm:py-6 lg:px-12">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-2 relative z-50 cursor-pointer hover:opacity-80 transition-opacity">
+                    <svg viewBox="0 0 256 256" class="h-6 w-6 fill-[#010101] transition-colors duration-300 lg:fill-white">
+                        <path d="M 128 128 C 128 198.692 70.692 256 0 256 C 0 185.308 57.308 128 128 128 Z M 128 128 C 198.692 128 256 185.308 256 256 C 185.308 256 128 198.692 128 128 Z M 0 0 C 70.692 0 128 57.308 128 128 C 57.308 128 0 70.692 0 0 Z M 256 0 C 256 70.692 198.692 128 128 128 C 128 57.308 185.308 0 256 0 Z" />
+                    </svg>
+                    <span class="text-lg font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
+                        damir vpn
+                    </span>
+                </a>
+
+                <!-- Desktop Nav Cluster -->
+                <nav class="hidden items-center gap-3 md:flex">
+                    <div class="flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-1.5 backdrop-blur-lg">
+                        <a href="#modules" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Modules</a>
+                        <a href="#clientele" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Clientele</a>
+                        <a href="#solutions" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">
+                            Solutions
+                            <!-- ChevronDown Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><path d="m6 9 6 6 6-6"/></svg>
+                        </a>
+                        <a href="#billing" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Billing</a>
+                    </div>
+                    <a href="#get-started" class="cta-gradient flex items-center justify-center self-stretch rounded-full px-5 text-sm font-medium text-white transition-opacity hover:opacity-90">
+                        Get started
+                    </a>
+                </nav>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="mobile-menu-btn" class="relative z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-lg md:hidden hover:bg-white/20 transition-colors cursor-pointer">
+                    <!-- Menu Icon -->
+                    <svg id="icon-menu" class="absolute h-5 w-5 text-[#010101] transition-all duration-300 lg:text-white rotate-0 scale-100 opacity-100" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                    <!-- X Icon -->
+                    <svg id="icon-x" class="absolute h-5 w-5 text-[#010101] transition-all duration-300 lg:text-white -rotate-90 scale-0 opacity-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </header>
+
+            <!-- Mobile Overlay & Drawer -->
+            <div class="md:hidden">
+                <!-- Backdrop -->
+                <div id="mobile-backdrop" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-md transition-opacity duration-300 pointer-events-none opacity-0 cursor-pointer"></div>
+                
+                <!-- Side Panel Drawer -->
+                <div id="mobile-drawer" class="fixed right-0 top-0 z-40 flex h-full w-72 flex-col bg-black/90 backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] translate-x-full">
+                    <div class="flex flex-col gap-2 px-6 pt-24">
+                        <a href="#modules" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 60ms;">Modules</a>
+                        <a href="#clientele" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 120ms;">Clientele</a>
+                        <a href="#solutions" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 180ms;">
+                            Solutions
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </a>
+                        <a href="#billing" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 240ms;">Billing</a>
+                    </div>
+
+                    <!-- Mobile Bottom CTA -->
+                    <div id="mobile-cta" class="mobile-cta mt-auto px-6 pb-10" style="transition-delay: 300ms;">
+                        <a href="#get-started" onclick="toggleMenu()" class="cta-gradient flex w-full items-center justify-center rounded-full py-3.5 text-center text-sm font-medium text-white hover:opacity-90 transition-opacity">
+                            Get started
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Bottom-Anchored Content -->
+            <main class="mt-auto flex flex-col gap-6 px-5 pb-8 sm:gap-8 sm:px-8 sm:pb-12 lg:flex-row lg:items-end lg:justify-between lg:px-12 lg:pb-16">
+                
+                <!-- Left Col: Headline + CTA -->
+                <div class="max-w-xl">
+                    <h1 class="text-3xl font-semibold leading-[1.1] tracking-tight text-[#010101] transition-colors duration-300 sm:text-4xl lg:text-[3.5rem] lg:text-white">
+                        Secure your connection and unlock the web while you rest
+                    </h1>
+                    
+                    <form action="#submit-email" method="GET" class="mt-6 flex flex-col gap-3 sm:mt-8 sm:inline-flex sm:flex-row sm:items-center sm:gap-0 sm:rounded-full sm:bg-white sm:p-1.5">
+                        <input
+                            type="email"
+                            name="email"
+                            required
+                            placeholder="Type your email"
+                            class="rounded-full bg-white px-5 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none sm:w-64 sm:rounded-none sm:bg-transparent sm:px-4 sm:py-2"
+                        />
+                        <button type="submit" class="cta-gradient flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 sm:py-2.5 cursor-pointer">
+                            Get started
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Col: Glass Cards (Made clickable as links) -->
+                <div class="flex flex-col gap-4 sm:flex-row lg:w-auto lg:gap-5">
+                    
+                    <!-- Stats Card -->
+                    <a href="#stats-details" class="glass-card-hover flex flex-col justify-between rounded-2xl bg-white/10 p-5 backdrop-blur-lg sm:w-64 sm:p-6 block">
+                        <div class="font-silkscreen text-3xl font-normal tracking-tight text-[#010101] transition-colors duration-300 sm:text-4xl lg:text-white">
+                            42,500+
+                        </div>
+                        <p class="mt-3 text-sm leading-relaxed text-[#010101]/70 transition-colors duration-300 sm:mt-4 lg:text-white/70">
+                            Users run Damir VPN to stay safe online daily.
+                        </p>
+                    </a>
+
+                    <!-- Testimonial Card -->
+                    <a href="#testimonial-stratify" class="glass-card-hover flex flex-col rounded-2xl bg-white/10 p-5 backdrop-blur-lg sm:w-64 sm:p-6 block">
+                        <div class="mb-3 flex items-center gap-2 sm:mb-4">
+                            <div class="flex h-6 w-6 items-center justify-center rounded bg-[#010101] text-xs font-bold text-white">
+                                S
+                            </div>
+                            <span class="text-sm font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
+                                Stratify
+                            </span>
+                        </div>
+                        
+                        <p class="text-sm leading-relaxed text-[#010101]/80 transition-colors duration-300 lg:text-white/80">
+                            "With Damir VPN we went from exposed browsing to total digital security and peace of mind."
+                        </p>
+                        
+                        <div class="mt-4 flex items-center gap-3 sm:mt-5">
+                            <img
+                                src="https://i.pravatar.cc/72?img=12"
+                                alt="Sara Klein"
+                                class="h-9 w-9 rounded-full bg-white/20 object-cover"
+                            />
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
+                                    Sara Klein
+                                </span>
+                                <span class="text-xs text-[#010101]/60 transition-colors duration-300 lg:text-white/60">
+                                    Dir of Operations
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- JavaScript for Mobile Menu Interactions -->
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const iconMenu = document.getElementById('icon-menu');
+        const iconX = document.getElementById('icon-x');
+        const backdrop = document.getElementById('mobile-backdrop');
+        const drawer = document.getElementById('mobile-drawer');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const mobileCta = document.getElementById('mobile-cta');
+        
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            
+            if (isMenuOpen) {
+                // Lock scroll
+                document.body.style.overflow = 'hidden';
+                
+                // Toggle icons
+                iconMenu.classList.remove('rotate-0', 'scale-100', 'opacity-100');
+                iconMenu.classList.add('rotate-90', 'scale-0', 'opacity-0');
+                
+                iconX.classList.remove('-rotate-90', 'scale-0', 'opacity-0');
+                iconX.classList.add('rotate-0', 'scale-100', 'opacity-100');
+                
+                // Show overlay
+                backdrop.classList.remove('pointer-events-none', 'opacity-0');
+                backdrop.classList.add('pointer-events-auto', 'opacity-100');
+                
+                // Slide in panel
+                drawer.classList.remove('translate-x-full');
+                drawer.classList.add('translate-x-0');
+                
+                // Animate elements inside drawer
+                mobileLinks.forEach(link => link.classList.add('open'));
+                mobileCta.classList.add('open');
+            } else {
+                // Unlock scroll
+                document.body.style.overflow = '';
+                
+                // Toggle icons
+                iconMenu.classList.add('rotate-0', 'scale-100', 'opacity-100');
+                iconMenu.classList.remove('rotate-90', 'scale-0', 'opacity-0');
+                
+                iconX.classList.add('-rotate-90', 'scale-0', 'opacity-0');
+                iconX.classList.remove('rotate-0', 'scale-100', 'opacity-100');
+                
+                // Hide overlay
+                backdrop.classList.add('pointer-events-none', 'opacity-0');
+                backdrop.classList.remove('pointer-events-auto', 'opacity-100');
+                
+                // Slide out panel
+                drawer.classList.add('translate-x-full');
+                drawer.classList.remove('translate-x-0');
+                
+                // Reset elements inside drawer
+                mobileLinks.forEach(link => link.classList.remove('open'));
+                mobileCta.classList.remove('open');
+            }
+        }
+
+        // Event Listeners
+        menuBtn.addEventListener('click', toggleMenu);
+        backdrop.addEventListener('click', toggleMenu);
+    </script>
+</body>
+</html>
