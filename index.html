@@ -1,273 +1,394 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Damir VPN</title>
     
-    <!-- Tailwind CSS (CDN) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Instrument Sans"', 'sans-serif'],
+                        serif: ['"Instrument Serif"', 'serif'],
+                    },
+                    colors: {
+                        primary: '#3054ff',
+                        'primary-hover': '#2040e0',
+                        accent: '#b4c0ff'
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     
+    <!-- HLS.js for video -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
     <style>
-        .font-geist { font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; }
-        .font-silkscreen { font-family: 'Silkscreen', cursive; }
-        
-        .cta-gradient {
-            background: linear-gradient(to bottom, #2B2B2B, #101010);
-        }
-        
-        /* Mobile Drawer Transition Classes */
-        .mobile-link {
-            transition: all 300ms ease;
+        /* Custom Animations */
+        .motion-fade-up {
             opacity: 0;
-            transform: translateX(24px);
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
-        .mobile-link.open {
-            opacity: 1;
-            transform: translateX(0);
+        .motion-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
+        }
+        .motion-fade {
+            opacity: 0;
+            transition: opacity 0.6s ease-out 0.4s;
+        }
+        .motion-fade-up-delayed {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out 0.6s, transform 0.5s ease-out 0.6s;
         }
         
-        .mobile-cta {
-            transition: all 400ms ease;
-            opacity: 0;
-            transform: translateY(16px);
-        }
-        .mobile-cta.open {
+        /* State class applied by JS on load */
+        .is-loaded .motion-fade-up,
+        .is-loaded .motion-fade-up-delayed {
             opacity: 1;
             transform: translateY(0);
         }
-
-        /* Hover effects for glass cards to make them feel clickable */
-        .glass-card-hover {
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-            cursor: pointer;
+        .is-loaded .motion-scale {
+            opacity: 1;
+            transform: scale(1);
         }
-        .glass-card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            background-color: rgba(255, 255, 255, 0.15);
+        .is-loaded .motion-fade {
+            opacity: 0.7;
+        }
+
+        /* Spinner Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #3054ff;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Modal Transitions */
+        .modal {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Hide scrollbar when modal is open */
+        body.modal-open {
+            overflow: hidden;
         }
     </style>
 </head>
-<body class="font-geist antialiased">
-    <section class="relative h-screen w-full overflow-hidden">
-        <!-- Full-bleed Background Video -->
-        <video 
-            autoplay 
-            loop 
-            muted 
-            playsinline 
-            class="absolute inset-0 h-full w-full object-cover" 
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260803_192301_9231ed6b-c55c-4a48-909c-4ebe11cf2e11.mp4">
-        </video>
+<body class="bg-black text-white font-sans antialiased relative min-h-screen">
 
-        <!-- Content Overlay -->
-        <div class="relative z-10 flex h-full flex-col">
-            <!-- Top Bar Navigation -->
-            <header class="flex items-center justify-between px-5 py-5 sm:px-8 sm:py-6 lg:px-12">
-                <!-- Logo -->
-                <a href="/" class="flex items-center gap-2 relative z-50 cursor-pointer hover:opacity-80 transition-opacity">
-                    <svg viewBox="0 0 256 256" class="h-6 w-6 fill-[#010101] transition-colors duration-300 lg:fill-white">
-                        <path d="M 128 128 C 128 198.692 70.692 256 0 256 C 0 185.308 57.308 128 128 128 Z M 128 128 C 198.692 128 256 185.308 256 256 C 185.308 256 128 198.692 128 128 Z M 0 0 C 70.692 0 128 57.308 128 128 C 57.308 128 0 70.692 0 0 Z M 256 0 C 256 70.692 198.692 128 128 128 C 128 57.308 185.308 0 256 0 Z" />
-                    </svg>
-                    <span class="text-lg font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
-                        damir vpn
-                    </span>
-                </a>
+    <!-- Background Video -->
+    <div class="fixed inset-0 z-0 w-full h-full overflow-hidden">
+        <video id="bg-video" class="absolute inset-0 w-full h-full object-cover opacity-60" muted loop playsinline poster="https://images.unsplash.com/photo-1647356191320-d7a1f80ca777?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjB0ZWNobm9sb2d5JTIwbmV1cmFsJTIwbmV0d29ya3xlbnwxfHx8fDE3Njg5NzIyNTV8MA&ixlib=rb-4.1.0&q=80&w=1080"></video>
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+        
+        <!-- Decorative Gradients -->
+        <div class="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-blue-900/20 blur-[120px] mix-blend-screen rounded-full pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-indigo-900/20 blur-[120px] mix-blend-screen rounded-full pointer-events-none"></div>
+    </div>
 
-                <!-- Desktop Nav Cluster -->
-                <nav class="hidden items-center gap-3 md:flex">
-                    <div class="flex items-center gap-1 rounded-full bg-white/10 px-1.5 py-1.5 backdrop-blur-lg">
-                        <a href="#modules" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Modules</a>
-                        <a href="#clientele" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Clientele</a>
-                        <a href="#solutions" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">
-                            Solutions
-                            <!-- ChevronDown Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><path d="m6 9 6 6 6-6"/></svg>
-                        </a>
-                        <a href="#billing" class="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">Billing</a>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-transparent px-6 py-4 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m4.93 19.07 14.14-14.14"/></svg>
+            <span class="font-bold text-lg tracking-tight">Damir VPN</span>
+        </a>
+
+        <!-- Desktop Links -->
+        <div class="hidden md:flex items-center gap-8 font-medium text-sm">
+            <a href="#" class="text-white/80 hover:text-white transition-colors flex items-center gap-1">Продукты <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+            <button onclick="openModal('modal-clients')" class="text-white/80 hover:text-white transition-colors cursor-pointer">Клиенты</button>
+            <button onclick="openModal('modal-solutions')" class="text-white/80 hover:text-white transition-colors cursor-pointer">Решения</button>
+            <a href="#" class="text-white/80 hover:text-white transition-colors">Цены</a>
+        </div>
+
+        <!-- Right Section -->
+        <div class="flex items-center gap-4">
+            <a href="#" class="hidden sm:block text-sm font-medium text-white/80 hover:text-white transition-colors">Поддержка</a>
+            <button onclick="startConnection()" class="bg-white text-black rounded-full px-5 py-2.5 text-sm font-semibold hover:bg-gray-100 transition-colors">
+                Войти
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="relative z-10 w-full min-h-screen flex flex-col items-center justify-center pt-20">
+        <div class="max-w-5xl mx-auto px-6 text-center space-y-12 w-full">
+            
+            <!-- Pre-headline -->
+            <h2 class="font-serif text-3xl sm:text-5xl lg:text-[48px] leading-[1.1] text-white motion-fade-up">
+                Безопасность со скоростью мысли
+            </h2>
+
+            <!-- Main Headline -->
+            <h1 class="font-sans font-semibold text-6xl sm:text-8xl lg:text-[136px] leading-[0.9] tracking-tighter bg-gradient-to-b from-white via-white to-[#b4c0ff] bg-clip-text text-transparent motion-scale">
+                Damir VPN
+            </h1>
+
+            <!-- Subheadline -->
+            <p class="font-sans text-lg sm:text-[20px] leading-[1.65] text-white max-w-xl mx-auto motion-fade">
+                Создайте безопасное подключение, обходите блокировки и получите защищенный корпоративный доступ в один клик с нашей передовой инфраструктурой.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 motion-fade-up-delayed">
+                <!-- Primary Button -->
+                <button onclick="startConnection()" class="group relative flex items-center gap-3 bg-white pl-6 pr-2 py-2 rounded-full hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 transition-all duration-300">
+                    <span class="font-medium text-lg text-[#0a0400]">Начать бесплатно</span>
+                    <div class="w-10 h-10 rounded-full bg-[#3054ff] group-hover:bg-[#2040e0] flex items-center justify-center transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </div>
-                    <a href="#get-started" class="cta-gradient flex items-center justify-center self-stretch rounded-full px-5 text-sm font-medium text-white transition-opacity hover:opacity-90">
-                        Get started
-                    </a>
-                </nav>
-
-                <!-- Mobile Hamburger Button -->
-                <button id="mobile-menu-btn" class="relative z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-lg md:hidden hover:bg-white/20 transition-colors cursor-pointer">
-                    <!-- Menu Icon -->
-                    <svg id="icon-menu" class="absolute h-5 w-5 text-[#010101] transition-all duration-300 lg:text-white rotate-0 scale-100 opacity-100" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-                    <!-- X Icon -->
-                    <svg id="icon-x" class="absolute h-5 w-5 text-[#010101] transition-all duration-300 lg:text-white -rotate-90 scale-0 opacity-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                 </button>
-            </header>
 
-            <!-- Mobile Overlay & Drawer -->
-            <div class="md:hidden">
-                <!-- Backdrop -->
-                <div id="mobile-backdrop" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-md transition-opacity duration-300 pointer-events-none opacity-0 cursor-pointer"></div>
+                <!-- Secondary Button -->
+                <button onclick="openModal('modal-solutions')" class="group flex items-center gap-2 text-white/70 hover:text-white backdrop-blur-sm hover:bg-white/5 px-4 py-2 rounded-lg transition-all">
+                    Посмотреть решения
+                    <svg class="group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Клиенты (Clients) Modal -->
+    <div id="modal-clients" class="modal fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('modal-clients')"></div>
+        <div class="modal-content relative bg-[#0a0a0a] border border-white/10 rounded-2xl w-full max-w-4xl p-8 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeModal('modal-clients')" class="absolute top-4 right-4 text-white/50 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            <h3 class="text-3xl font-serif mb-8 text-center">Истории наших клиентов</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Клиент 1 -->
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-12 h-12 bg-blue-900/50 rounded-full flex items-center justify-center mb-4 text-xl font-bold">IT</div>
+                    <h4 class="text-xl font-semibold mb-2">DevWave Studio</h4>
+                    <p class="text-sm text-white/70">Используют корпоративный VPN для безопасного и прямого доступа к AWS и внутренним репозиториям. Скорость разработки выросла на 15% за счет отсутствия обрывов.</p>
+                </div>
+                <!-- Клиент 2 -->
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-12 h-12 bg-indigo-900/50 rounded-full flex items-center justify-center mb-4 text-xl font-bold">AC</div>
+                    <h4 class="text-xl font-semibold mb-2">Алексей С., Трейдер</h4>
+                    <p class="text-sm text-white/70">Подключил выделенный IP для торговли на зарубежных криптобиржах. Пинг снизился до <10мс, а блокировки аккаунтов из-за частой смены IP полностью прекратились.</p>
+                </div>
+                <!-- Клиент 3 -->
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-12 h-12 bg-purple-900/50 rounded-full flex items-center justify-center mb-4 text-xl font-bold">GB</div>
+                    <h4 class="text-xl font-semibold mb-2">Аналитика Global</h4>
+                    <p class="text-sm text-white/70">Маркетплейс использует наши резидентные серверы для сбора данных и обхода региональных ограничений для мониторинга конкурентов по всему миру.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Решения (Solutions) Modal -->
+    <div id="modal-solutions" class="modal fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('modal-solutions')"></div>
+        <div class="modal-content relative bg-[#0a0a0a] border border-white/10 rounded-2xl w-full max-w-5xl p-8 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <button onclick="closeModal('modal-solutions')" class="absolute top-4 right-4 text-white/50 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            <h3 class="text-3xl font-serif mb-2 text-center">Решения и тарифы</h3>
+            <p class="text-center text-white/60 mb-8 max-w-2xl mx-auto">Подберите оптимальную инфраструктуру для ваших задач.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Карточка 1 -->
+                <div class="bg-gradient-to-b from-white/10 to-white/5 rounded-xl p-6 border border-white/10 hover:border-[#3054ff]/50 transition-colors flex flex-col h-full">
+                    <h4 class="text-lg font-semibold mb-1 text-white/80">Базовый VPN</h4>
+                    <div class="text-3xl font-sans font-bold mb-4">$99.01<span class="text-sm font-normal text-white/50">/мес</span></div>
+                    <ul class="text-sm text-white/70 space-y-2 mb-6 flex-grow">
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> 50+ стран</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> До 5 устройств</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Стандартная скорость</li>
+                    </ul>
+                    <button class="w-full bg-white/10 hover:bg-white/20 rounded-lg py-2 text-sm font-medium transition-colors">Выбрать</button>
+                </div>
+
+                <!-- Карточка 2 -->
+                <div class="bg-gradient-to-b from-[#3054ff]/20 to-[#3054ff]/5 rounded-xl p-6 border border-[#3054ff]/50 relative flex flex-col h-full transform lg:-translate-y-4 shadow-[0_0_30px_rgba(48,84,255,0.2)]">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#3054ff] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Популярное</div>
+                    <h4 class="text-lg font-semibold mb-1 text-accent">Pro Защита</h4>
+                    <div class="text-3xl font-sans font-bold mb-4">$100.00<span class="text-sm font-normal text-white/50">/мес</span></div>
+                    <ul class="text-sm text-white/90 space-y-2 mb-6 flex-grow">
+                        <li class="flex items-center gap-2"><svg class="text-[#b4c0ff] w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Двойной VPN (MultiHop)</li>
+                        <li class="flex items-center gap-2"><svg class="text-[#b4c0ff] w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Защита от DDoS</li>
+                        <li class="flex items-center gap-2"><svg class="text-[#b4c0ff] w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Безлимитная скорость</li>
+                    </ul>
+                    <button class="w-full bg-[#3054ff] hover:bg-[#2040e0] rounded-lg py-2 text-sm font-medium transition-colors shadow-lg shadow-[#3054ff]/30">Выбрать</button>
+                </div>
+
+                <!-- Карточка 3 -->
+                <div class="bg-gradient-to-b from-white/10 to-white/5 rounded-xl p-6 border border-white/10 hover:border-[#3054ff]/50 transition-colors flex flex-col h-full">
+                    <h4 class="text-lg font-semibold mb-1 text-white/80">Белые списки</h4>
+                    <div class="text-2xl font-sans font-bold mb-4 mt-2">Индивидуально</div>
+                    <ul class="text-sm text-white/70 space-y-2 mb-6 flex-grow">
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Выделенный IP (Dedicated)</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Доступ к закрытым API</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Чистая история IP</li>
+                    </ul>
+                    <button class="w-full bg-white/10 hover:bg-white/20 rounded-lg py-2 text-sm font-medium transition-colors">Связаться</button>
+                </div>
+
+                <!-- Карточка 4 -->
+                <div class="bg-gradient-to-b from-white/10 to-white/5 rounded-xl p-6 border border-white/10 hover:border-[#3054ff]/50 transition-colors flex flex-col h-full">
+                    <h4 class="text-lg font-semibold mb-1 text-white/80">Корпоративный</h4>
+                    <div class="text-2xl font-sans font-bold mb-4 mt-2">Безлимитный</div>
+                    <ul class="text-sm text-white/70 space-y-2 mb-6 flex-grow">
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> От 10+ сотрудников</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Единая панель админа</li>
+                        <li class="flex items-center gap-2"><svg class="text-green-400 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> 24/7 Приоритетная поддержка</li>
+                    </ul>
+                    <button class="w-full bg-white/10 hover:bg-white/20 rounded-lg py-2 text-sm font-medium transition-colors">Запросить демо</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Animation Modal -->
+    <div id="modal-connect" class="modal fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+        <div class="relative z-10 flex flex-col items-center justify-center text-center">
+            
+            <!-- Dynamic Icon Container -->
+            <div id="connect-icon-container" class="w-32 h-32 flex items-center justify-center mb-8 relative">
+                <!-- Spinner (Visible initially) -->
+                <div id="connect-spinner" class="loading-spinner absolute"></div>
                 
-                <!-- Side Panel Drawer -->
-                <div id="mobile-drawer" class="fixed right-0 top-0 z-40 flex h-full w-72 flex-col bg-black/90 backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] translate-x-full">
-                    <div class="flex flex-col gap-2 px-6 pt-24">
-                        <a href="#modules" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 60ms;">Modules</a>
-                        <a href="#clientele" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 120ms;">Clientele</a>
-                        <a href="#solutions" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 180ms;">
-                            Solutions
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </a>
-                        <a href="#billing" onclick="toggleMenu()" class="mobile-link flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white" style="transition-delay: 240ms;">Billing</a>
-                    </div>
-
-                    <!-- Mobile Bottom CTA -->
-                    <div id="mobile-cta" class="mobile-cta mt-auto px-6 pb-10" style="transition-delay: 300ms;">
-                        <a href="#get-started" onclick="toggleMenu()" class="cta-gradient flex w-full items-center justify-center rounded-full py-3.5 text-center text-sm font-medium text-white hover:opacity-90 transition-opacity">
-                            Get started
-                        </a>
-                    </div>
+                <!-- Lightning / Success (Hidden initially) -->
+                <div id="connect-success" class="absolute inset-0 bg-[#3054ff] rounded-full flex items-center justify-center opacity-0 scale-50 transition-all duration-500 shadow-[0_0_50px_rgba(48,84,255,0.6)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 </div>
             </div>
 
-            <!-- Main Bottom-Anchored Content -->
-            <main class="mt-auto flex flex-col gap-6 px-5 pb-8 sm:gap-8 sm:px-8 sm:pb-12 lg:flex-row lg:items-end lg:justify-between lg:px-12 lg:pb-16">
-                
-                <!-- Left Col: Headline + CTA -->
-                <div class="max-w-xl">
-                    <h1 class="text-3xl font-semibold leading-[1.1] tracking-tight text-[#010101] transition-colors duration-300 sm:text-4xl lg:text-[3.5rem] lg:text-white">
-                        Secure your connection and unlock the web while you rest
-                    </h1>
-                    
-                    <form action="#submit-email" method="GET" class="mt-6 flex flex-col gap-3 sm:mt-8 sm:inline-flex sm:flex-row sm:items-center sm:gap-0 sm:rounded-full sm:bg-white sm:p-1.5">
-                        <input
-                            type="email"
-                            name="email"
-                            required
-                            placeholder="Type your email"
-                            class="rounded-full bg-white px-5 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none sm:w-64 sm:rounded-none sm:bg-transparent sm:px-4 sm:py-2"
-                        />
-                        <button type="submit" class="cta-gradient flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 sm:py-2.5 cursor-pointer">
-                            Get started
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Right Col: Glass Cards (Made clickable as links) -->
-                <div class="flex flex-col gap-4 sm:flex-row lg:w-auto lg:gap-5">
-                    
-                    <!-- Stats Card -->
-                    <a href="#stats-details" class="glass-card-hover flex flex-col justify-between rounded-2xl bg-white/10 p-5 backdrop-blur-lg sm:w-64 sm:p-6 block">
-                        <div class="font-silkscreen text-3xl font-normal tracking-tight text-[#010101] transition-colors duration-300 sm:text-4xl lg:text-white">
-                            42,500+
-                        </div>
-                        <p class="mt-3 text-sm leading-relaxed text-[#010101]/70 transition-colors duration-300 sm:mt-4 lg:text-white/70">
-                            Users run Damir VPN to stay safe online daily.
-                        </p>
-                    </a>
-
-                    <!-- Testimonial Card -->
-                    <a href="#testimonial-stratify" class="glass-card-hover flex flex-col rounded-2xl bg-white/10 p-5 backdrop-blur-lg sm:w-64 sm:p-6 block">
-                        <div class="mb-3 flex items-center gap-2 sm:mb-4">
-                            <div class="flex h-6 w-6 items-center justify-center rounded bg-[#010101] text-xs font-bold text-white">
-                                S
-                            </div>
-                            <span class="text-sm font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
-                                Stratify
-                            </span>
-                        </div>
-                        
-                        <p class="text-sm leading-relaxed text-[#010101]/80 transition-colors duration-300 lg:text-white/80">
-                            "With Damir VPN we went from exposed browsing to total digital security and peace of mind."
-                        </p>
-                        
-                        <div class="mt-4 flex items-center gap-3 sm:mt-5">
-                            <img
-                                src="https://i.pravatar.cc/72?img=12"
-                                alt="Sara Klein"
-                                class="h-9 w-9 rounded-full bg-white/20 object-cover"
-                            />
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold text-[#010101] transition-colors duration-300 lg:text-white">
-                                    Sara Klein
-                                </span>
-                                <span class="text-xs text-[#010101]/60 transition-colors duration-300 lg:text-white/60">
-                                    Dir of Operations
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-
-                </div>
-            </main>
-        </div>
-    </section>
-
-    <!-- JavaScript for Mobile Menu Interactions -->
-    <script>
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const iconMenu = document.getElementById('icon-menu');
-        const iconX = document.getElementById('icon-x');
-        const backdrop = document.getElementById('mobile-backdrop');
-        const drawer = document.getElementById('mobile-drawer');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-        const mobileCta = document.getElementById('mobile-cta');
-        
-        let isMenuOpen = false;
-
-        function toggleMenu() {
-            isMenuOpen = !isMenuOpen;
+            <!-- Dynamic Text -->
+            <h2 id="connect-title" class="font-sans text-3xl font-bold mb-2">Установка безопасного соединения...</h2>
+            <p id="connect-subtitle" class="text-white/60">Поиск оптимального сервера</p>
             
-            if (isMenuOpen) {
-                // Lock scroll
-                document.body.style.overflow = 'hidden';
-                
-                // Toggle icons
-                iconMenu.classList.remove('rotate-0', 'scale-100', 'opacity-100');
-                iconMenu.classList.add('rotate-90', 'scale-0', 'opacity-0');
-                
-                iconX.classList.remove('-rotate-90', 'scale-0', 'opacity-0');
-                iconX.classList.add('rotate-0', 'scale-100', 'opacity-100');
-                
-                // Show overlay
-                backdrop.classList.remove('pointer-events-none', 'opacity-0');
-                backdrop.classList.add('pointer-events-auto', 'opacity-100');
-                
-                // Slide in panel
-                drawer.classList.remove('translate-x-full');
-                drawer.classList.add('translate-x-0');
-                
-                // Animate elements inside drawer
-                mobileLinks.forEach(link => link.classList.add('open'));
-                mobileCta.classList.add('open');
-            } else {
-                // Unlock scroll
-                document.body.style.overflow = '';
-                
-                // Toggle icons
-                iconMenu.classList.add('rotate-0', 'scale-100', 'opacity-100');
-                iconMenu.classList.remove('rotate-90', 'scale-0', 'opacity-0');
-                
-                iconX.classList.add('-rotate-90', 'scale-0', 'opacity-0');
-                iconX.classList.remove('rotate-0', 'scale-100', 'opacity-100');
-                
-                // Hide overlay
-                backdrop.classList.add('pointer-events-none', 'opacity-0');
-                backdrop.classList.remove('pointer-events-auto', 'opacity-100');
-                
-                // Slide out panel
-                drawer.classList.add('translate-x-full');
-                drawer.classList.remove('translate-x-0');
-                
-                // Reset elements inside drawer
-                mobileLinks.forEach(link => link.classList.remove('open'));
-                mobileCta.classList.remove('open');
-            }
+            <!-- Close button (Appears at the end) -->
+            <button id="connect-close" onclick="closeConnectionModal()" class="mt-10 opacity-0 pointer-events-none translate-y-4 transition-all duration-500 bg-white/10 hover:bg-white/20 px-6 py-2 rounded-full text-sm font-medium">
+                Перейти в панель
+            </button>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // Trigger initial hero animations
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.body.classList.add('is-loaded');
+            }, 100);
+        });
+
+        // Initialize HLS.js for background video
+        const videoSrc = "https://stream.mux.com/T6oQJQ02cQ6N01TR6iHwZkKFkbepS34dkkIc9iukgy400g.m3u8";
+        const video = document.getElementById('bg-video');
+
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch(e => console.log("Autoplay prevented:", e));
+            });
+        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = videoSrc;
+            video.addEventListener("loadedmetadata", () => {
+                video.play().catch(e => console.log("Autoplay prevented:", e));
+            });
         }
 
-        // Event Listeners
-        menuBtn.addEventListener('click', toggleMenu);
-        backdrop.addEventListener('click', toggleMenu);
+        // Modals Logic
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        // Connection Animation Logic
+        let connectionTimeout1, connectionTimeout2;
+
+        function startConnection() {
+            const modal = document.getElementById('modal-connect');
+            const spinner = document.getElementById('connect-spinner');
+            const successIcon = document.getElementById('connect-success');
+            const title = document.getElementById('connect-title');
+            const subtitle = document.getElementById('connect-subtitle');
+            const closeBtn = document.getElementById('connect-close');
+
+            // Reset state
+            spinner.style.opacity = '1';
+            successIcon.style.opacity = '0';
+            successIcon.style.transform = 'scale(0.5)';
+            title.innerText = 'Установка безопасного соединения...';
+            subtitle.innerText = 'Поиск оптимального сервера';
+            closeBtn.style.opacity = '0';
+            closeBtn.style.pointerEvents = 'none';
+            closeBtn.style.transform = 'translateY(16px)';
+
+            // Open Modal
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+
+            // Animate transition after 2.5 seconds
+            clearTimeout(connectionTimeout1);
+            clearTimeout(connectionTimeout2);
+
+            connectionTimeout1 = setTimeout(() => {
+                spinner.style.opacity = '0';
+                successIcon.style.opacity = '1';
+                successIcon.style.transform = 'scale(1)';
+                
+                title.innerText = 'Подключена пробная версия VPN!';
+                title.classList.add('text-accent');
+                subtitle.innerText = 'Канал защищен шифрованием военного уровня.';
+                
+                closeBtn.style.opacity = '1';
+                closeBtn.style.pointerEvents = 'auto';
+                closeBtn.style.transform = 'translateY(0)';
+            }, 2500);
+        }
+
+        function closeConnectionModal() {
+            closeModal('modal-connect');
+            // Remove colored text class upon closing
+            setTimeout(() => {
+                document.getElementById('connect-title').classList.remove('text-accent');
+            }, 300);
+        }
     </script>
 </body>
 </html>
